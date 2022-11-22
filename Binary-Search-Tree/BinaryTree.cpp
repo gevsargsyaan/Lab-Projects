@@ -2,37 +2,59 @@
 #include "TreeNode.h"
 #include<iostream>
 #include<queue>
+
+//Default Constructor
 BinaryTree::BinaryTree()
 {
 	nodeCount = 0;
 	root = nullptr;
 }
-BinaryTree::BinaryTree(int data)
+//Single Argument Constructor
+BinaryTree::BinaryTree(int &data)
 {
 	nodeCount = 0;
-	Insert(data);
-	
+	insert(data);
 }
+//Parameterized Constructor (std::initializer_list)
 BinaryTree::BinaryTree(std::initializer_list<int> list)
 {
 	root = nullptr;
 	nodeCount = 0;
-	for (auto e : list)
+	for (const auto &e : list)
 	{
-		Insert(e);
+		insert(e);
 	}
 }
+//Copy Constructor {
 BinaryTree::BinaryTree(BinaryTree& Tree)
 {
 	nodeCount = Tree.nodeCount;
 	root = copy(Tree.root);
 }
+TreeNode* BinaryTree::copy(TreeNode* node)
+{
+	if (node)
+	{
+		TreeNode* newNode = new TreeNode();
+		newNode->key = node->key;
+		newNode->left = copy(node->left);
+		newNode->right = copy(node->right);
+		return newNode;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+//Copy Constructor }
+//Destructor
 BinaryTree::~BinaryTree() 
 {
 	clear();
 	delete root;
 }
-void BinaryTree::Insert(int data)
+//Insert using key
+void BinaryTree::insert(int data)
 {
 	if (root == nullptr) {
 		root = new TreeNode(data);
@@ -63,15 +85,12 @@ void BinaryTree::Insert(int data)
 		}
 	}	
 }
-void BinaryTree::Print()
-{
-	Print_Tree(this->root);
-	std::cout << std::endl;
-}
+//Get Node's count
 int BinaryTree::get_number_of_nodes()
 {
 	return nodeCount;
 }
+//Get root data
 int BinaryTree::get_root_data()
 {
 	return root->key;
@@ -79,22 +98,31 @@ int BinaryTree::get_root_data()
 int BinaryTree::getHeight(TreeNode* node)
 {
 	if (!node)
+	{
 		return 0;
-	else {
-		
+	}
+	else 
+	{	
 		int left_height = getHeight(node->left);
 		int right_height = getHeight(node->right);
 		if (left_height >= right_height)
+		{
 			return left_height + 1;
+		}
 		else
+		{
 			return right_height + 1;
+		}
+			
 	}
 }
+//Get tree height
 int BinaryTree::get_height()
 {
 	return getHeight(root);
 }
-bool BinaryTree::contains(int data)
+//Contains using key(true/false)
+bool BinaryTree::contains(int &data)
 {
 	TreeNode* current = root;
 	while (current && current->key != data)
@@ -106,6 +134,7 @@ bool BinaryTree::contains(int data)
 	}
 	return current != nullptr;
 }
+//Delete Node using key
 void BinaryTree::erase(int data)
 {
 	TreeNode* current = root;
@@ -151,6 +180,7 @@ void BinaryTree::erase(int data)
 	erase(replace_value);
 	current->key = replace_value;
 }
+//Delete all Node's except root
 void BinaryTree::clear()
 {
 	clearTree(root);
@@ -166,7 +196,8 @@ void BinaryTree::clearTree(TreeNode* &node)
 	node = nullptr;
 
 }
-TreeNode* BinaryTree::find(int data)
+//Find using key (Node address)
+TreeNode* BinaryTree::find(int &data)
 {
 	TreeNode* current = root;
 	while (current && current->key != data)
@@ -178,6 +209,7 @@ TreeNode* BinaryTree::find(int data)
 	}
 	return current;
 }
+//Inorder traversal {
 void BinaryTree::inorder(TreeNode* node)
 {
 	if (node != nullptr) {
@@ -191,6 +223,8 @@ void BinaryTree::inorder()
 	inorder(root);
 	std::cout << std::endl;
 }
+//Inorder traversal }
+//Preorder traversal {
 void BinaryTree::preorder(TreeNode* node)
 {
 	if (node != nullptr) {
@@ -199,7 +233,13 @@ void BinaryTree::preorder(TreeNode* node)
 		preorder(node->right);
 	}
 }
-
+void BinaryTree::preorder()
+{
+	preorder(root);
+	std::cout << std::endl;
+}
+//Preorder traversal }
+//Levelorder traversal {
 void BinaryTree::levelorder()
 {
 	levelorder(root);
@@ -229,45 +269,14 @@ void BinaryTree::levelorder(TreeNode* node)
 		list.pop();
 	}
 }
-void BinaryTree::preorder()
-{
-	preorder(root);
-	std::cout << std::endl;
-}
-TreeNode* BinaryTree::copy(TreeNode* node)
-{
-	if (node)
-	{
-		TreeNode* newNode = new TreeNode();
-		newNode->key = node->key;
-		newNode->left = copy(node->left);
-		newNode->right = copy(node->right);
-		return newNode;
-	}
-	else
-	{
-		return nullptr;
-	}
-}
+//Levelorder traversal }
+//PostOrder traversal {
 void BinaryTree::postorder()
 {
 	postorder(root);
 	std::cout << std::endl;
 }
-BinaryTree& BinaryTree::operator=(BinaryTree& other)
-{
-	BinaryTree* ptr = &other;
-    
-    if (this != &other)
-    {
-        clear ();
-        
-        root = ptr->root; 
 
-        ptr->root = nullptr;
-    }
-    return *this;
-}
 void BinaryTree::postorder(TreeNode* node)
 {
 	if (node != nullptr) {
@@ -275,6 +284,13 @@ void BinaryTree::postorder(TreeNode* node)
 		postorder(node->right);
 		std::cout << node->key << ',';
 	}
+}
+//Postorder traversal }
+//Print tree (private) {
+void BinaryTree::Print()
+{
+	Print_Tree(this->root);
+	std::cout << std::endl;
 }
 void BinaryTree::Print_Tree(TreeNode* current)
 {
@@ -285,19 +301,34 @@ void BinaryTree::Print_Tree(TreeNode* current)
 		Print_Tree(current->right);
 	}
 }
+//Print tree (private) }
+//Copy Operator assignment
+BinaryTree& BinaryTree::operator=(BinaryTree& other)
+{
+	BinaryTree* ptr = &other;
 
+	if (this != &other)
+	{
+		clear();
+		root = ptr->root;
+		ptr->root = nullptr;
+	}
+	return *this;
+}
+//Operator stream out { 
+//Print for ostream
 void BinaryTree::print(std::ostream& out, TreeNode* curr) const
 {
 	if (curr)
 	{
 		print(out, curr->right);
-		out << curr->key <<"," ;
+		out << curr->key << " ";
 		print(out, curr->left);
 	}
 }
-
 std::ostream& operator<<(std::ostream& out, const BinaryTree& tmp)
 {
 	tmp.print(out, tmp.root);
 	return out;
 }
+//Operator stream out } 
