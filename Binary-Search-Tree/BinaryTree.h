@@ -19,6 +19,7 @@ private:
 	void print(std::ostream& ost, TreeNode<data_type>* curr) const;
 	void Print_Tree(TreeNode<data_type>* node);
 	void Print();
+	void Merge(TreeNode<data_type>* root_r);
 public:
 	//Root node
 	TreeNode<data_type>* root;
@@ -58,12 +59,25 @@ public:
 	void postorder();
 	//Levelorder
 	void levelorder();
+	//Merge
+	void merge(BinaryTree<data_type>& other);
+	// Equal function for operator overloading (!=, ==)
+	bool equal(TreeNode<data_type>* root1, TreeNode<data_type>* root2);
+	//Operator (==)
+	template<class data_type>
+	friend bool operator==(BinaryTree<data_type> &lhs, BinaryTree<data_type>& rhs);
+	//Operator (!=)
+	template<class data_type>
+	friend bool operator!=(BinaryTree<data_type>& lhs, BinaryTree<data_type>& rhs);
 	//Operator copy assignment (=)
 	BinaryTree<data_type>& operator=( BinaryTree<data_type>& rhs);
 	//Operator stream out(<<)
 	template<class data_type>
 	friend std::ostream& operator<<(std::ostream& out, const BinaryTree<data_type>& tmp);
-	
+	//Operator (+=)
+	BinaryTree<data_type>& operator+=(BinaryTree<data_type>& other);
+	//Operator (+)
+	BinaryTree<data_type>& operator+(BinaryTree<data_type>& other);
 };
 
 
@@ -303,7 +317,7 @@ void BinaryTree<data_type>::inorder(TreeNode<data_type>* node)
 {
 	if (node != nullptr) {
 		inorder(node->left);
-		std::cout << node->key << ',';
+		std::cout << node->key << ' ';
 		inorder(node->right);
 	}
 }
@@ -319,7 +333,7 @@ template<class data_type>
 void BinaryTree<data_type>::preorder(TreeNode<data_type>* node)
 {
 	if (node != nullptr) {
-		std::cout << node->key << ',';
+		std::cout << node->key << ' ';
 		preorder(node->left);
 		preorder(node->right);
 	}
@@ -373,7 +387,7 @@ void BinaryTree<data_type>::postorder(TreeNode<data_type>* node)
 	if (node != nullptr) {
 		postorder(node->left);
 		postorder(node->right);
-		std::cout << node->key << ',';
+		std::cout << node->key << ' ';
 	}
 }
 //Postorder traversal }
@@ -428,3 +442,68 @@ std::ostream& operator<<(std::ostream& out, const BinaryTree<data_type>& tmp)
 	return out;
 }
 //Operator stream out } 
+
+// Equal function for operator overloading (!=, ==)
+template<class data_type>
+bool equal(TreeNode<data_type>* root1, TreeNode<data_type>* root2)
+{
+	if (root1 == nullptr && root2 == nullptr)
+		return 1;
+	else if (root1 == nullptr || root2 == nullptr)
+		return 0;
+	else 
+	{
+		if (root1->key == root2->key && equal(root1->left, root2->left) && equal(root1->right, root2->right))
+			return 1;
+		else
+			return 0;
+	}
+}
+//Operator (==)
+template<class data_type>
+bool operator==(BinaryTree<data_type>& lhs, BinaryTree<data_type>& rhs)
+{
+	return equal(lhs.root, rhs.root);
+}
+//Operator (!=)
+template<class data_type>
+bool operator!=(BinaryTree<data_type>& lhs, BinaryTree<data_type>& rhs)
+{
+	return !(equal(lhs.root, rhs.root));
+}
+//Merge private
+template<class data_type>
+void BinaryTree<data_type>::Merge(TreeNode<data_type>* r_root)
+{
+	if (r_root)
+	{
+		insert(r_root->key);
+		Merge(r_root->left);
+		Merge(r_root->right);
+	}
+
+	return;
+	
+}
+//Merge public
+template<class data_type>
+void BinaryTree<data_type>::merge(BinaryTree<data_type>& other)
+{	
+	Merge(other.root);
+}
+
+//Operator(+=)
+template<class data_type>
+BinaryTree<data_type>& BinaryTree<data_type>::operator+=(BinaryTree<data_type>& other)
+{
+	merge(other);
+	return *this;
+}
+
+//Operator(+)
+template<class data_type>
+BinaryTree<data_type>& BinaryTree<data_type>::operator+(BinaryTree<data_type>& other)
+{
+	merge(other);
+	return *this;
+}

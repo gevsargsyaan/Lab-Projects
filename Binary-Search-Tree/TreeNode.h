@@ -8,6 +8,7 @@ public:
 	TreeNode<data_type>* right;
 	TreeNode();
 	TreeNode(data_type data);
+	~TreeNode();
 };
 
 template<class data_type>
@@ -24,7 +25,12 @@ TreeNode<data_type>::TreeNode(data_type data)
 	left = nullptr;
 	right = nullptr;
 }
-
+template<class data_type>
+TreeNode<data_type>::~TreeNode()
+{
+	delete left;
+	delete right;
+}
 
 
 	
